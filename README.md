@@ -1,5 +1,3 @@
-Here’s a cleaned, professional version you can paste over your `README.md`:
-
 ```markdown
 # ai-defi-lab: Arbitrum Wallet Inspector
 
