@@ -97,7 +97,7 @@ Each snapshot includes:
 - `timestamp` (ISO 8601, UTC)
 - `block_number`
 - `wallet_address`
-- `balances`: an array of per‑token objects with `symbol`, `address`, `decimals`, `risk_tier`, `raw_balance` (string), and `human_balance` (float)
+- `balances`: an array of per‑token objects with `symbol`, `address`, `decimals`, `risk_tier`, `coingecko_id`, `raw_balance` (string), and `human_balance` (float)
 
 ### Configure tracked tokens
 
@@ -108,6 +108,7 @@ Each entry needs:
 - `address` – token contract address on Arbitrum
 - `decimals` – ERC‑20 decimals (e.g. 18 for WETH, 6 for USDC)
 - `risk_tier` – informal risk label such as `"low"`, `"medium"`, `"high"`
+- `coingecko_id` – CoinGecko asset ID for future price lookups (e.g. `"weth"`, `"usd-coin"`)
 
 ### Debug raw RPC connectivity
 
