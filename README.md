@@ -45,49 +45,68 @@ cd ai-defi-lab
 python -m venv .venv
 source .venv/bin/activate  # macOS/Linux
 # .\.venv\Scripts\Activate.ps1  # Windows PowerShell
-Install dependencies:
 ```
+
+Install dependencies:
+
 ```bash
 pip install -r requirements.txt
 # or:
 # pip install web3 eth-account python-dotenv requests
-Create a .env file in the project root:
+```
 
+Create a `.env` file in the project root:
+
+```
 ARBITRUM_RPC_URL=https://arb1.arbitrum.io/rpc
 TEST_WALLET_ADDRESS=0xYourBurnerAddressHere
-.env is already in .gitignore; don’t commit secrets.
-
-Usage
-Check that the Web3 connection works and print the latest Arbitrum block:
 ```
+
+> `.env` is already in `.gitignore`; don’t commit secrets.
+
+## Usage
+
+Check that the Web3 connection works and print the latest Arbitrum block:
+
 ```bash
 python check_block_number.py
-Fetch the wallet’s ETH and selected ERC‑20 token balances:
 ```
+
+Fetch the wallet’s ETH and selected ERC‑20 token balances:
+
 ```bash
 python balances.py
-To change which tokens are checked, edit the TOKENS mapping in balances.py and plug in real token contract addresses.
+```
 
-Example output
-Example check_block_number.py run:
+Running `python balances.py` now also writes a JSON snapshot to `snapshots/` using the config in `config/tokens.json`.
 
+To change which tokens are checked, edit `config/tokens.json` with real token contract addresses.
+
+## Example output
+
+Example `check_block_number.py` run:
+
+```
 dotenv_path: /Users/.../ai-defi-lab/.env
 .env loaded: True
 Attempting to connect to RPC endpoint: https://arb1.arbitrum.io/rpc
 Current block number on Arbitrum: 442570471
 Test wallet address: 0x...
-Example balances.py run:
+```
 
+Example `balances.py` run:
+
+```
 Connected to Arbitrum at block: 442570471
 Wallet: 0x...
 ETH balance: 0.0123 ETH
 WETH balance: 0.0000 WETH
 USDC balance: 0.00 USDC
 ARB balance: 42.00 ARB
-Tech stack
-Python 3.x
-
-[Web3.py](navigational_search:web3.py GitHub) for Arbitrum JSON‑RPC calls
-
-python-dotenv for .env loading
 ```
+
+## Tech stack
+
+- Python 3.x
+- [Web3.py](https://web3py.readthedocs.io/) for Arbitrum JSON‑RPC calls
+- [python-dotenv](https://pypi.org/project/python-dotenv/) for `.env` loading
