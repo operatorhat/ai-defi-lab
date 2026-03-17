@@ -1,4 +1,3 @@
-```markdown
 # ai-defi-lab: Arbitrum Wallet Inspector
 
 Small Python lab for inspecting Arbitrum wallets with Web3.py.  
