@@ -62,6 +62,7 @@ for token_cfg in TOKENS:
     token_address = token_cfg["address"]
     decimals = token_cfg["decimals"]
     risk_tier = token_cfg.get("risk_tier", "unknown")
+    coingecko_id = token_cfg.get("coingecko_id", None)
 
     token = w3.eth.contract(
         address=Web3.to_checksum_address(token_address),
@@ -79,6 +80,7 @@ for token_cfg in TOKENS:
                 "address": token_address,
                 "decimals": decimals,
                 "risk_tier": risk_tier,
+                "coingecko_id": coingecko_id,
                 "raw_balance": str(raw_balance),
                 "human_balance": human_balance,
             }
