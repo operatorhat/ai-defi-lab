@@ -1,6 +1,9 @@
 import os
 from dotenv import load_dotenv
 from web3 import Web3
+import json
+from datetime import datetime, UTC
+from pathlib import Path
 
 # 1) Load env
 load_dotenv()
@@ -44,24 +47,61 @@ ERC20_ABI = [
     },
 ]
 
-# 4) Known token contracts on Arbitrum (fill in with real addresses)
-TOKENS = {
-    "WETH": "0x82aF49447D8a07e3bd95BD0d56f35241523fBab1",  # put real WETH contract address here
-    "USDC": "0xaf88d065e77c8cC2239327C5EDb3A432268e5831",  # real USDC
-    "ARB":  "0x912CE59144191C1204E64559FE8253a0e49E6548",  # real ARB token
-}
+# 4) Load token config from config/tokens.json
+CONFIG_PATH = Path(__file__).parent / "config" / "tokens.json"
 
-for symbol, token_address in TOKENS.items():
-    if token_address == "0x...":
-        # skip placeholders until you put real addresses in
-        continue
+with CONFIG_PATH.open() as f:
+    TOKENS = json.load(f)
 
-    token = w3.eth.contract(address=Web3.to_checksum_address(token_address), abi=ERC20_ABI)
+
+# 5) Query ERC20 balances and build snapshot data
+balances = []
+
+for token_cfg in TOKENS:
+    symbol = token_cfg["symbol"]
+    token_address = token_cfg["address"]
+    decimals = token_cfg["decimals"]
+    risk_tier = token_cfg.get("risk_tier", "unknown")
+
+    token = w3.eth.contract(
+        address=Web3.to_checksum_address(token_address),
+        abi=ERC20_ABI,
+    )
 
     try:
-        decimals = token.functions.decimals().call()
         raw_balance = token.functions.balanceOf(ADDRESS).call()
-        human = raw_balance / (10 ** decimals)
-        print(f"{symbol} balance: {human} {symbol}")
+        human_balance = raw_balance / (10 ** decimals)
+        print(f"{symbol} balance: {human_balance} {symbol}")
+
+        balances.append(
+            {
+                "symbol": symbol,
+                "address": token_address,
+                "decimals": decimals,
+                "risk_tier": risk_tier,
+                "raw_balance": str(raw_balance),
+                "human_balance": human_balance,
+            }
+        )
     except Exception as e:
         print(f"Error reading {symbol} at {token_address}: {e}")
+
+# 6) Build snapshot payload
+snapshot = {
+    "timestamp": datetime.now(UTC).isoformat().replace("+00:00", "Z"),
+    "block_number": w3.eth.block_number,
+    "wallet_address": ADDRESS,
+    "balances": balances,
+}
+
+# 7) Write snapshot file
+SNAPSHOTS_DIR = Path(__file__).parent / "snapshots"
+SNAPSHOTS_DIR.mkdir(exist_ok=True)
+
+filename = f"snapshot_{snapshot['block_number']}.json"
+output_path = SNAPSHOTS_DIR / filename
+
+with output_path.open("w") as f:
+    json.dump(snapshot, f, indent=2)
+
+print(f"Snapshot written to {output_path}")
