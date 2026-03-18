@@ -2,7 +2,7 @@ import os
 from dotenv import load_dotenv
 from web3 import Web3
 import json
-from datetime import datetime
+from datetime import datetime, UTC
 from pathlib import Path
 
 # 1) Load env
@@ -88,7 +88,7 @@ for token_cfg in TOKENS:
 
 # 6) Build snapshot payload
 snapshot = {
-    "timestamp": datetime.utcnow().isoformat() + "Z",
+    "timestamp": datetime.now(UTC).isoformat().replace("+00:00", "Z"),
     "block_number": w3.eth.block_number,
     "wallet_address": ADDRESS,
     "balances": balances,
